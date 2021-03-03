@@ -1,38 +1,34 @@
 <template>
   <div id="app">
-    <button v-on:click="getUsers" v-if="!lists.length">Listar</button>
-    <input type="text" placeholder="Buscar" v-model="login" />
-    <ul>
-      <li v-for="item in searchUser" :key="item.id">
-        {{ item.login }}
-      </li>
-    </ul>
+    <input type="text" v-model="username" placeholder="buscador username" />
+    <ol>
+      <li v-for="repo in repos" v-bind:key="repo.id">{{ repo.name }}</li>
+    </ol>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+function queryGithubAPI(username) {
+  return fetch(
+    `https://api.github.com/users/${username}/repos`
+  ).then((response) => response.json());
+}
 
 export default {
   name: "App",
-  components: {},
   data() {
     return {
-      lists: [],
-      login: "",
+      username: "",
+      repos: [],
     };
   },
-  methods: {
-    getUsers: function () {
-      var urlUsers = "https://api.github.com/users";
-      axios.get(urlUsers).then((response) => {
-        this.lists = response.data;
+  watch: {
+    username: function () {
+      queryGithubAPI(this.username).then((repos) => {
+        if (repos.length > 0 && repos[0].id) {
+          this.repos = repos;
+        }
       });
-    },
-  },
-  computed: {
-    searchUser: function () {
-      return this.lists.filter((item) => item.login.includes(this.login));
     },
   },
 };
