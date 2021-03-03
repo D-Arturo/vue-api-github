@@ -1,40 +1,41 @@
 <template>
   <div id="app">
-
-    <Usuarios 
-    v-for="usuario in usuarios"
-    v-bind:key="usuario.id"
-    :username="usuario.login"
-    :avatar="usuario.avatar_url"
-    />
+    <button v-on:click="getUsers" v-if="!lists.length">Listar</button>
+    <input type="text" placeholder="Buscar" v-model="login" />
+    <ul>
+      <li v-for="item in searchUser" :key="item.id">
+        {{ item.login }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-
-import axios from 'axios'
-import Usuarios from './components/Usuarios'
+import axios from "axios";
 
 export default {
-  name: 'App',
-  components: {
-    Usuarios
+  name: "App",
+  components: {},
+  data() {
+    return {
+      lists: [],
+      login: "",
+    };
   },
-  data(){
-    return{
-      usuarios:[],
-    }
+  methods: {
+    getUsers: function () {
+      var urlUsers = "https://api.github.com/users";
+      axios.get(urlUsers).then((response) => {
+        this.lists = response.data;
+      });
+    },
   },
-  methods:{
-    getUsers(){
-      axios.get('https://api.github.com/users')
-      .then((respuesta) => this.usuarios = respuesta.data)
-    }
+  computed: {
+    searchUser: function () {
+      return this.lists.filter((item) => item.login.includes(this.login));
+    },
   },
-  mounted(){
-    this.getUsers()
-  }
-}
+};
 </script>
 
 <style>

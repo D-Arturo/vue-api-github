@@ -1,23 +1,18 @@
 <template>
   <div>
-    <input type="text" v-model="users">
+    <input type="text" v-model="username"/>
     <ol>
-      <li 
-      v-for="repo in repos"
-      v-bind:key="repo.id"
-      >{{repo}}</li>
+      <li v-for="field in fields" v-bind:key="field.id">{{ field }}</li>
     </ol>
   </div>
 </template>
 
 <script>
 export default {
-    name: 'Buscador',
-    props: ['users', 'repos']
-
-}
+  name: "Buscador",
+  props: ['fields']
+};
 </script>
 
 <style>
-
 </style>
